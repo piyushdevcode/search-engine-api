@@ -2,7 +2,7 @@ import contextlib
 from playwright.sync_api import sync_playwright
 import urllib
 
-# OPTIMIZING BROWSER REQ
+#! OPTIMIZING BROWSER REQ
 
 
 def scrape_duck_results(query, pages=1):
@@ -17,23 +17,27 @@ def scrape_duck_results(query, pages=1):
 
         # generating our search url
         q = urllib.parse.urlencode({"q": query})
-        print(q)
+
         url = f"https://duckduckgo.com/?{q}"
-        print("Generated  Url: ", url)
 
         page.goto(url)
 
         pages = int(pages)
+
+        # to get more search results
         if pages > 1:
             for _ in range(pages):
                 element_button = page.locator(".result--more__btn")
                 element_button.click()
 
+        # getting all the articles
         all_articles = page.locator("article")
         results = []
 
         for idx, article in enumerate(all_articles.element_handles(), 1):
             element_link = article.query_selector("h2")
+
+            #! ----------- CAN be optimized --------------------
             element_snippet = element_link.query_selector("xpath=..").query_selector(
                 "xpath=following-sibling::*"
             )
