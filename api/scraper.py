@@ -3,12 +3,6 @@ from playwright.sync_api import sync_playwright
 import urllib
 from api.route_interceptor import intercept_route
 
-#! OPTIMIZING BROWSER REQ
-
-#! add throttle rates for req per min
-
-#! API KEY token if possible
-
 
 def scrape_duck_results(query, pages_to_scrape=1):
     """
@@ -78,6 +72,4 @@ def scrape_duck_results(query, pages_to_scrape=1):
 
             results.append(result)
 
-            with open("temp.json", "w", encoding="utf-8") as f:
-                f.writelines(str(results))
         return results
