@@ -4,6 +4,10 @@ import urllib
 
 #! OPTIMIZING BROWSER REQ
 
+#! add throttle rates for req per min
+
+#! API KEY token if possible
+
 
 def scrape_duck_results(query, pages=1):
     """
@@ -12,7 +16,7 @@ def scrape_duck_results(query, pages=1):
     pages: no of pages to scrape
     """
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False)
+        browser = pw.chromium.launch(headless=False, devtools=True)
         page = browser.new_page()
 
         # generating our search url
@@ -24,6 +28,9 @@ def scrape_duck_results(query, pages=1):
 
         pages = int(pages)
 
+        ads = page.locator("#ads article")
+        no_of_ads = ads.count()
+
         # to get more search results
         if pages > 1:
             for _ in range(pages):
@@ -34,7 +41,8 @@ def scrape_duck_results(query, pages=1):
         all_articles = page.locator("article")
         results = []
 
-        for idx, article in enumerate(all_articles.element_handles(), 1):
+        # to remove the ads result in our response slicing the articles list
+        for idx, article in enumerate(all_articles.element_handles()[no_of_ads:], 1):
             element_link = article.query_selector("h2")
 
             #! ----------- CAN be optimized --------------------
@@ -69,5 +77,5 @@ def scrape_duck_results(query, pages=1):
 
             with open("temp.json", "w", encoding="utf-8") as f:
                 f.writelines(str(results))
-
+        page.pause()
         return results
