@@ -17,7 +17,7 @@ def scrape_duck_results(query, pages_to_scrape=1):
     pages_to_scrape: no of pages to scrape
     """
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False, devtools=True)
+        browser = pw.chromium.launch(headless=True, devtools=False)
 
         # for intercepting the route
         page = browser.new_page()
@@ -50,10 +50,8 @@ def scrape_duck_results(query, pages_to_scrape=1):
         for idx, article in enumerate(all_articles.element_handles()[no_of_ads:], 1):
             element_link = article.query_selector("h2")
 
-            #! ----------- CAN be optimized --------------------
-            element_snippet = element_link.query_selector("xpath=..").query_selector(
-                "xpath=following-sibling::*"
-            )
+            element_snippet = article.query_selector(":nth-child(3)")
+
             element_sitelink = article.query_selector_all(":nth-child(4) a")
 
             sitelinks = [
