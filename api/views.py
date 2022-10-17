@@ -13,9 +13,9 @@ def search_view(request):
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     # if pages are not specified in query params then default is 1
-    pages = request.query_params.get("pages", 1)
+    pages_to_scrape = request.query_params.get("pages", 1)
 
     query = query.strip()
     print("Search requested for ->", query)
-    data = scrape_duck_results(query, pages)
+    data = scrape_duck_results(query, pages_to_scrape)
     return Response({"results": data}, status=status.HTTP_200_OK)

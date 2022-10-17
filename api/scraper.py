@@ -1,6 +1,7 @@
 import contextlib
 from playwright.sync_api import sync_playwright
 import urllib
+from api.route_interceptor import intercept_route
 
 #! OPTIMIZING BROWSER REQ
 
@@ -9,14 +10,16 @@ import urllib
 #! API KEY token if possible
 
 
-def scrape_duck_results(query, pages=1):
+def scrape_duck_results(query, pages_to_scrape=1):
     """
     scrapes search results from duckduckgo
     query: whose search result is required
-    pages: no of pages to scrape
+    pages_to_scrape: no of pages to scrape
     """
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=False, devtools=True)
+
+        # for intercepting the route
         page = browser.new_page()
 
         # generating our search url
@@ -24,16 +27,18 @@ def scrape_duck_results(query, pages=1):
 
         url = f"https://duckduckgo.com/?{q}"
 
+        page.route("**/*", intercept_route)
         page.goto(url)
 
-        pages = int(pages)
+        pages_to_scrape = int(pages_to_scrape)
 
         ads = page.locator("#ads article")
         no_of_ads = ads.count()
 
+        page.pause()
         # to get more search results
-        if pages > 1:
-            for _ in range(pages):
+        if pages_to_scrape > 1:
+            for _ in range(pages_to_scrape):
                 element_button = page.locator(".result--more__btn")
                 element_button.click()
 
@@ -63,7 +68,7 @@ def scrape_duck_results(query, pages=1):
                 "snippet": element_snippet.inner_text(),
             }
 
-            # ads don't have favicon
+            # handling ads don't have favicon
             with contextlib.suppress(Exception):
                 result["favicon"] = "https:" + article.query_selector(
                     "a > img"
@@ -77,5 +82,4 @@ def scrape_duck_results(query, pages=1):
 
             with open("temp.json", "w", encoding="utf-8") as f:
                 f.writelines(str(results))
-        # page.pause()
         return results
