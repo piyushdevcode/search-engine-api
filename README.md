@@ -1,4 +1,4 @@
-# DuckDuckgo Search API
+# DuckDuckGo Search API
 
 ### Django Rest Framework Application to expose an endpoint for duckduckgo search having rate limit of 5 API calls per min
 
