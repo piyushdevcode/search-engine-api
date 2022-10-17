@@ -77,5 +77,5 @@ def scrape_duck_results(query, pages=1):
 
             with open("temp.json", "w", encoding="utf-8") as f:
                 f.writelines(str(results))
-        page.pause()
+        # page.pause()
         return results

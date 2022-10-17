@@ -102,7 +102,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+# for custom Rate limiting the api calls
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "5/min", "user": "5/min"},
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
