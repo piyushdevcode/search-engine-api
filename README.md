@@ -23,7 +23,7 @@ playwright install chromium
 
 ### 4. Run command
 ```sh
-python manage.py makemigrations & python manage.py migrate
+python manage.py makemigrations && python manage.py migrate
 ```
 
 ### 5. Start Server
